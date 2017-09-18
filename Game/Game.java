@@ -7,27 +7,36 @@ public class Game {
         try {
             int counter = 0;
             System.out.println("Waiting for users to join...");
+            System.out.println("(0/20) users have joined.");
+
             while (!gameReady) {
-                Thread.sleep(500);
-                System.out.println("0/20) users have joined.");
                 String clientJoin = ServerUDP.recieveClientPackets();
+
                 if(clientJoin.contains("ADD USER")) {
-                    String[] messageElements = clientJoin.split(" ");
-                    users.add(new User(messageElements[2], 2, true));
+                    String userName = clientJoin.substring(8);
+                    users.add(new User(userName, 2, true));
                 }
-                System.out.println("(" + counter + "/20) users have joined.");
-                int userArrayLen = users.size();
-                if(userArrayLen == 3){
+                System.out.println("Welcome " + users.get(users.size()));
+                System.out.println("(" + users.size() + "/20) users have joined.");
+
+                if(users.size() <= 3 && users.size() < 20){
                     counter++;
                     if(counter == 20){
                         gameReady = true;
                         System.out.println("Start Game Now.");
                     }
                 }
+                if (users.size() >= 20){
+                    gameReady = true;
+                    System.out.println("Start Game Now.");
+                }
             }
-        } catch (InterruptedException e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 //    public static void
 }
+
+
