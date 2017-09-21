@@ -1,34 +1,52 @@
 import java.util.*;
 public class Game {
-    private static List<User> users = new ArrayList<>();
+    public static List<User> users = new ArrayList<>();
+
+    private static int secondsPassed = 0;
+    private static boolean timeUp = false;
+
+    Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+        public void run() {
+            secondsPassed++;
+            if (secondsPassed == 10){
+                System.out.println("Time's up.");
+                timeUp = true;
+            }
+        }
+    };
+
+    public void start(){
+        timer.scheduleAtFixedRate(task, 0,1000);
+    }
 
     public static void init(){
         boolean gameReady = false;
         try {
-            int counter = 0;
             System.out.println("Waiting for users to join...");
             System.out.println("(0/20) users have joined.");
-
             while (!gameReady) {
                 String clientJoin = ServerUDP.recieveClientPackets();
 
                 if(clientJoin.contains("ADD USER")) {
-                    String userName = clientJoin.substring(8);
-                    users.add(new User(userName, 2, true));
+                    String userName = clientJoin.substring(9);
+                    secondsPassed = 0;
+                    users.add(new User(userName, 2, 1, true));
+                    System.out.println("(" + users.size() + "/20) users have joined.");
+                    System.out.println("Welcome to the Grid, " + userName);
                 }
-                System.out.println("Welcome " + users.get(users.size()));
-                System.out.println("(" + users.size() + "/20) users have joined.");
 
-                if(users.size() <= 3 && users.size() < 20){
-                    counter++;
-                    if(counter == 20){
+                if(users.size() > 2 && users.size() < 20){
+                    Game time = new Game();
+                    time.start();
+                    if(timeUp){
                         gameReady = true;
                         System.out.println("Start Game Now.");
                     }
-                }
-                if (users.size() >= 20){
-                    gameReady = true;
-                    System.out.println("Start Game Now.");
+                else if(users.size() > 20){
+                        gameReady = true;
+                        System.out.println("Limit reached, start game now.");
+                    }
                 }
             }
         }
@@ -36,7 +54,9 @@ public class Game {
             e.printStackTrace();
         }
     }
-//    public static void
+/*
+find out how to fix the timer not resetting when a player joins(should be line 33)
+ */
 }
 
 
