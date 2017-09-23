@@ -4,6 +4,7 @@ public class Game {
 
     private static int secondsPassed = 0;
     private static boolean timeUp = false;
+    private static boolean newPlayerJoin = true;
 
     Timer timer = new Timer();
     TimerTask task = new TimerTask() {
@@ -17,7 +18,7 @@ public class Game {
     };
 
     public void start(){
-        timer.scheduleAtFixedRate(task, 0,1000);
+        timer.scheduleAtFixedRate(task, 1000, 1000);
     }
 
     public static void init(){
@@ -30,15 +31,18 @@ public class Game {
 
                 if(clientJoin.contains("ADD USER")) {
                     String userName = clientJoin.substring(9);
-                    secondsPassed = 0;
+                    if (users.size() >= 3){
+                        secondsPassed = 0;
+                    }
                     users.add(new User(userName, 2, 1, true));
                     System.out.println("(" + users.size() + "/20) users have joined.");
                     System.out.println("Welcome to the Grid, " + userName);
                 }
-
-                if(users.size() > 2 && users.size() < 20){
+                if (users.size() == 3){
                     Game time = new Game();
                     time.start();
+                }
+                if(users.size() > 2 && users.size() < 20){
                     if(timeUp){
                         gameReady = true;
                         System.out.println("Start Game Now.");
@@ -54,9 +58,6 @@ public class Game {
             e.printStackTrace();
         }
     }
-/*
-find out how to fix the timer not resetting when a player joins(should be line 33)
- */
 }
 
 
