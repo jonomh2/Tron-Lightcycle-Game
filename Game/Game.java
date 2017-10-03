@@ -24,17 +24,19 @@ public class Game {
     public static void init(){
         boolean gameReady = false;
         try {
+            int IDCount = 0;
             System.out.println("Waiting for users to join...");
             System.out.println("(0/20) users have joined.");
             while (!gameReady) {
                 String clientJoin = ServerUDP.recieveClientPackets();
 
                 if(clientJoin.contains("ADD USER")) {
+                    IDCount++;
                     String userName = clientJoin.substring(9);
                     if (users.size() >= 3){
                         secondsPassed = 0;
                     }
-                    users.add(new User(userName, 2, 1, true));
+                    users.add(new User(userName, IDCount, 2, 1, true));
                     System.out.println("(" + users.size() + "/20) users have joined.");
                     System.out.println("Welcome to the Grid, " + userName);
                 }
