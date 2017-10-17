@@ -20,6 +20,7 @@ public class TestGame extends JFrame implements KeyListener{
     private Rectangle rectangle;
     private Rectangle rectangle2;
     private int currentDir = 0;
+    public boolean gameFinish = true;
     private Timer timer = new Timer();
     private Scanner input = new Scanner(System.in);
 
@@ -119,5 +120,6 @@ public class TestGame extends JFrame implements KeyListener{
 
     public static void main(String[] args) {
         new TestGame();
+        System.out.println("finish now");
     }
 }
