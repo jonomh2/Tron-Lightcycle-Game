@@ -112,26 +112,26 @@ public class GridGame {
     }
 
     public static void positionUsers() {
-        Game.users.add(new User("User 1", 0, 2,  0, true));
-        Game.users.add(new User("User 2", 1, 2,  0, true));
-        Game.users.add(new User("User 3", 1, 2,  0, true));
-        Game.users.add(new User("User 4", 1, 2,  0, true));
-        Game.users.add(new User("User 5", 1, 2,  0, true));
-        Game.users.add(new User("User 6", 1, 2,  0, true));
-        Game.users.add(new User("User 7", 1, 2,  0, true));
-        Game.users.add(new User("User 8", 1, 2,  0, true));
-        Game.users.add(new User("User 9", 1, 2,  0, true));
-        Game.users.add(new User("User 10", 1, 2,  0, true));
-        Game.users.add(new User("User 11", 1, 2,  0, true));
-        Game.users.add(new User("User 12", 1, 2,  0, true));
-        Game.users.add(new User("User 13", 1, 2,  0, true));
-        Game.users.add(new User("User 14", 1, 2,  0, true));
-        Game.users.add(new User("User 15", 1, 2,  0, true));
-        Game.users.add(new User("User 16", 1, 2,  0, true));
-        Game.users.add(new User("User 17", 1, 2,  0, true));
-        Game.users.add(new User("User 18", 1, 2,  0, true));
-        Game.users.add(new User("User 19", 1, 2,  0, true));
-        Game.users.add(new User("User 20", 1, 2,  0, true));
+        Game.users.add(new User("User 1", 0, 2,  0, true, "blue"));
+        Game.users.add(new User("User 2", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 3", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 4", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 5", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 6", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 7", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 8", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 9", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 10", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 11", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 12", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 13", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 14", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 15", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 16", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 17", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 18", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 19", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 20", 1, 2,  0, true, "blue"));
         Collections.shuffle(Game.users);
         for (int i = 0; i < Game.users.size(); i++) {
             int tempX = PositionToCoord(playerPositions[i])[0];

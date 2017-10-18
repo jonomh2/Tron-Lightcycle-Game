@@ -36,7 +36,7 @@ public class Game {
                     if (users.size() >= 3){
                         secondsPassed = 0;
                     }
-                    users.add(new User(userName, IDCount, 2, 1, true));
+                    users.add(new User(userName, IDCount, 2, 1, true, "blue"));
                     System.out.println("(" + users.size() + "/20) users have joined.");
                     System.out.println("Welcome to the Grid, " + userName);
                 }

@@ -4,11 +4,13 @@ public class User{
     public int currentSpeed;
     public int currentDirection;
     public boolean isJetWallOn;
-    User(String name, int ID, int speed, int direction, boolean jetWall){
+    public String userColour;
+    User(String name, int ID, int speed, int direction, boolean jetWall, String colour){
         this.name = name;
         this.userID = ID;
         this.currentSpeed = speed;
         this.currentDirection = direction;
         this.isJetWallOn = jetWall;
+        this.userColour = colour;
     }
 }
