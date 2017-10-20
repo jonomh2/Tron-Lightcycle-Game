@@ -120,6 +120,5 @@ public class TestGame extends JFrame implements KeyListener{
 
     public static void main(String[] args) {
         new TestGame();
-        System.out.println("finish now");
     }
 }

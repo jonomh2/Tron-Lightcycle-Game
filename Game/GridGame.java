@@ -173,20 +173,15 @@ public class GridGame {
 
             }
         }
+        ClientUI client = new ClientUI();
     }
 
     public void runGame(){
         timer.scheduleAtFixedRate(tsk, 0, 35);
-        for (int row = 0; row < theGrid.length; row++) {
-            for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-
-            }
-        }
     }
 
-    public static void main(String[] args) {
-        GridGame game = new GridGame();
-        game.timer.scheduleAtFixedRate(game.tsk, 0, 35);
+    public GridGame(){
+
     }
 }
 
