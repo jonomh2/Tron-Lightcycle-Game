@@ -24,7 +24,7 @@ public class Game {
     public static void init(){
         boolean gameReady = false;
         try {
-            int IDCount = 0;
+            int IDCount = 1;
             System.out.println("Waiting for users to join...");
             System.out.println("(0/20) users have joined.");
             while (!gameReady) {

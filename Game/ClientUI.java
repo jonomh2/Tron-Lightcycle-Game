@@ -7,6 +7,12 @@ import java.util.TimerTask;
 
 public class ClientUI extends JFrame {
 
+    public static int[][] clientGrid = new int[101][101];
+
+
+    JPanel mainPanel = new JPanel();
+    JPanel scorePanel = new JPanel();
+    JPanel gamePanel = new JPanel();
     private static String currentColour;
     public static Rectangle tempRect;
     private Rectangle rectangle = new Rectangle();
@@ -15,14 +21,22 @@ public class ClientUI extends JFrame {
     private java.util.Timer timer = new Timer();
 
     public ClientUI() {
-        setBackground(Color.lightGray);
+        mainPanel.setLayout(new BorderLayout());
+        add(mainPanel);
+        mainPanel.add(scorePanel, BorderLayout.NORTH);
+        mainPanel.add(gamePanel, BorderLayout.CENTER);
+        mainPanel.setBackground(Color.lightGray);
         setSize(GridGame.theGrid[0].length * 10, GridGame.theGrid.length * 10);
-        setBackground(Color.lightGray);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
-        timer.scheduleAtFixedRate(tsk, 0, 35);
+        Game.users.add(new User("User 20", 1, 2, 0, true, "blue"));
+        timer.scheduleAtFixedRate(tsk, 0, 10);
+        timer.scheduleAtFixedRate(repaintGrid, 0, 35);
+
     }
+
+    private static boolean rectanglePlaced = false;
 
     private int secondsPassed = 0;
 
@@ -30,53 +44,64 @@ public class ClientUI extends JFrame {
         @Override
         public void run() {
             secondsPassed++;
-            recieveGameUpdates();
+            receiveGameUpdates();
+        }
+    };
+
+    private TimerTask repaintGrid = new TimerTask() {
+        @Override
+        public void run() {
             repaint();
         }
     };
 
-    public static void recieveGameUpdates() {
+    public static void receiveGameUpdates() {
         String recievedMessage = ClientUDP.recieveServerPackets();
         convertMessage(recievedMessage);
     }
 
     public static void convertMessage(String message) {
+        int[] intMessage = new int[3];
         if (message.contains("GRID UPDATE")) {
             message = message.substring(12);
             String[] parts = message.split("/");
             for (String i : parts) {
-                String[] value = i.split("-");
-                for (String j : value) {
-                    String[] coordinates = j.split(",");
-                    drawGame(coordinates);
+                String[] coordinates = i.split("-");
+                int count = 0;
+                for (String g : coordinates) {
+                    intMessage[count] = Integer.parseInt(g);
+                    count++;
                 }
+                drawGame(intMessage);
             }
         }
     }
 
-    public static void drawGame(String[] coordinates) {
-        int loopCount = 0;
-        int rectX = Integer.parseInt(coordinates[1]);
-        int rectY = Integer.parseInt(coordinates[2]);
-        tempRect = new Rectangle(rectX, rectY, 10, 10);
-        if(Integer.parseInt(coordinates[0]) <= 20) {
-            currentColour = Game.users.get(Integer.parseInt(coordinates[0])).userColour;
-        }
-        else{
-            currentColour = "blue";
-        }
+    public static void drawGame(int[] coordinates) {
+        clientGrid[coordinates[1]][coordinates[2]] = coordinates[0];
     }
 
 
-    public void paint (Graphics g) {
-        Graphics2D g2 = (Graphics2D)g;
-        if (Objects.equals(currentColour, "blue")){
-            g2.setColor(Color.blue);
-            g2.fill(tempRect);
+    public void paint(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        for (int row = 0; row < clientGrid.length; row++) {
+            for (int columnInt = 0; columnInt < clientGrid[row].length; columnInt++) {
+                if (clientGrid[row][columnInt] != 0) {
+                    if (clientGrid[row][columnInt] < 21) {
+                        tempRect = new Rectangle(row, columnInt, 10, 10);
+                        g2.setColor(Color.blue);
+                        g2.fill(tempRect);
+                    }
+                }
+            }
         }
-        else{
-            g2.setColor(Color.MAGENTA);
-            g2.fill(tempRect);
-        }
+//        if (Objects.equals(currentColour, "blue")){
+//            g2.setColor(Color.blue);
+//            g2.fill(tempRect);
+//        }
+//        else{
+//            g2.setColor(Color.MAGENTA);
+//            g2.fill(tempRect);
+//        }
     }
 }

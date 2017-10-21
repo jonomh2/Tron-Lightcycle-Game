@@ -57,16 +57,15 @@ public class TestGame extends JFrame implements KeyListener{
     };
 
 
-    JPanel upperPanel1 = new JPanel();
     public TestGame() {
         this.addKeyListener(this);
         rectangle2 = new Rectangle(480, 480, 10, 10);
         rectangle = new Rectangle(480, 480, 10, 10);
         setSize(GridGame.theGrid[0].length*10,GridGame.theGrid.length*10);
-        setBackground(Color.lightGray);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
+        setBackground(Color.lightGray);
         timer.scheduleAtFixedRate(tsk, 0, 35);
     }
 
@@ -105,6 +104,7 @@ public class TestGame extends JFrame implements KeyListener{
     }
 
     public void paint (Graphics g) {
+        setBackground(Color.lightGray);
         Graphics2D g2 = (Graphics2D)g;
         if (lightWallOn){
             g.setColor(Color.cyan);

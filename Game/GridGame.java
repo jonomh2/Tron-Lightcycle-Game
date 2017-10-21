@@ -5,6 +5,8 @@ import java.util.*;
 public class GridGame {
     static int playerCount = Game.users.size();
 
+    public static int[][] theGrid = new int[101][101];
+
     public static String[] playerPositions = {"100,35", "100,65", "0,50", "0,20", "0,80", "50,0", "50,100", "80,0",
             "80,100", "20,0", "20,100", "100,20", "100,80", "0,35", "0,65", "35,100", "35,0", "65,0", "65,100", "100,50"};
 
@@ -19,8 +21,8 @@ public class GridGame {
         String messageString = "";
         for (int row = 0; row < theGrid.length; row++) {
             for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                if (theGrid[row][columnInt] != 0){
-                    String tempString = theGrid[row][columnInt] + "-" + row + "," + columnInt + "/";
+                if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != 100){
+                    String tempString = theGrid[row][columnInt] + "-" + row + "-" + columnInt + "/";
                     messageString = String.format("%s%s", messageString, tempString);
                 }
             }
@@ -36,37 +38,57 @@ public class GridGame {
             secondsPassed++;
             for (int row = 0; row < theGrid.length; row++) {
                 for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                    if (theGrid[row][columnInt] != 0){
-                        if (Game.users.get(theGrid[row][columnInt]).currentDirection == 0){
-                            theGrid[row - 1][columnInt] = Game.users.get(theGrid[row][columnInt]).userID;
-                            if (Game.users.get(theGrid[row][columnInt]).isJetWallOn) {
+                    if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != 100){
+                        if (Game.users.get(theGrid[row][columnInt]-1).currentDirection == 0){
+                            try {
+                                theGrid[row - 1][columnInt] = Game.users.get(theGrid[row][columnInt]-1).userID;
+                            }
+                            catch (ArrayIndexOutOfBoundsException e){
+                                theGrid[row][columnInt] = 0;
+                            }
+                            if (Game.users.get(theGrid[row][columnInt]-1).isJetWallOn) {
                                 theGrid[row][columnInt] = 100;
                             }
                             else{
                                 theGrid[row][columnInt] = 0;
                             }
                         }
-                        else if (Game.users.get(theGrid[row][columnInt]).currentDirection == 1){
-                            theGrid[row][columnInt - 1] = Game.users.get(theGrid[row][columnInt]).userID;
-                            if (Game.users.get(theGrid[row][columnInt]).isJetWallOn) {
+                        else if (Game.users.get(theGrid[row][columnInt]-1).currentDirection == 1){
+                            try {
+                                theGrid[row][columnInt - 1] = Game.users.get(theGrid[row][columnInt]-1).userID;
+                            }
+                            catch (ArrayIndexOutOfBoundsException e){
+                                theGrid[row][columnInt] = 0;
+                            }
+                            if (Game.users.get(theGrid[row][columnInt]-1).isJetWallOn) {
                                 theGrid[row][columnInt] = 100;
                             }
                             else{
                                 theGrid[row][columnInt] = 0;
                             }
                         }
-                        else if (Game.users.get(theGrid[row][columnInt]).currentDirection == 2){
-                            theGrid[row + 1][columnInt] = Game.users.get(theGrid[row][columnInt]).userID;
-                            if (Game.users.get(theGrid[row][columnInt]).isJetWallOn) {
+                        else if (Game.users.get(theGrid[row][columnInt]-1).currentDirection == 2){
+                            try {
+                                theGrid[row + 1][columnInt] = Game.users.get(theGrid[row][columnInt]-1).userID;
+                            }
+                            catch (ArrayIndexOutOfBoundsException e){
+                                theGrid[row][columnInt] = 0;
+                            }
+                            if (Game.users.get(theGrid[row][columnInt]-1).isJetWallOn) {
                                 theGrid[row][columnInt] = 100;
                             }
                             else{
                                 theGrid[row][columnInt] = 0;
                             }
                         }
-                        else if (Game.users.get(theGrid[row][columnInt]).currentDirection == 2){
-                            theGrid[row][columnInt + 1] = Game.users.get(theGrid[row][columnInt]).userID;
-                            if (Game.users.get(theGrid[row][columnInt]).isJetWallOn) {
+                        else if (Game.users.get(theGrid[row][columnInt]-1).currentDirection == 2){
+                            try {
+                                theGrid[row][columnInt + 1] = Game.users.get(theGrid[row][columnInt]-1).userID;
+                            }
+                            catch (ArrayIndexOutOfBoundsException e){
+                                theGrid[row][columnInt] = 0;
+                            }
+                            if (Game.users.get(theGrid[row][columnInt]-1).isJetWallOn) {
                                 theGrid[row][columnInt] = 100;
                             }
                             else{
@@ -86,7 +108,6 @@ public class GridGame {
 
     };
 
-    public static int[][] theGrid = new int[101][101];
 
     private static int resetDirection(int userID){
 
@@ -112,27 +133,32 @@ public class GridGame {
     }
 
     public static void positionUsers() {
-        Game.users.add(new User("User 1", 0, 2,  0, true, "blue"));
-        Game.users.add(new User("User 2", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 3", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 4", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 5", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 6", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 7", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 8", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 9", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 10", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 11", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 12", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 13", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 14", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 15", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 16", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 17", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 18", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 19", 1, 2,  0, true, "blue"));
-        Game.users.add(new User("User 20", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 1", 1, 2,  0, true, "blue"));
+        Game.users.add(new User("User 2", 2, 2,  0, true, "blue"));
+        Game.users.add(new User("User 3", 3, 2,  0, true, "blue"));
+        Game.users.add(new User("User 4", 4, 2,  0, true, "blue"));
+        Game.users.add(new User("User 5", 5, 2,  0, true, "blue"));
+        Game.users.add(new User("User 6", 6, 2,  0, true, "blue"));
+        Game.users.add(new User("User 7", 7, 2,  0, true, "blue"));
+        Game.users.add(new User("User 8", 8, 2,  0, true, "blue"));
+        Game.users.add(new User("User 9", 9, 2,  0, true, "blue"));
+        Game.users.add(new User("User 10", 10, 2,  0, true, "blue"));
+        Game.users.add(new User("User 11", 11, 2,  0, true, "blue"));
+        Game.users.add(new User("User 12", 12, 2,  0, true, "blue"));
+        Game.users.add(new User("User 13", 13, 2,  0, true, "blue"));
+        Game.users.add(new User("User 14", 14, 2,  0, true, "blue"));
+        Game.users.add(new User("User 15", 15, 2,  0, true, "blue"));
+        Game.users.add(new User("User 16", 16, 2,  0, true, "blue"));
+        Game.users.add(new User("User 17", 17, 2,  0, true, "blue"));
+        Game.users.add(new User("User 18", 18, 2,  0, true, "blue"));
+        Game.users.add(new User("User 19", 19, 2,  0, true, "blue"));
+        Game.users.add(new User("User 20", 20, 2,  0, true, "blue"));
         Collections.shuffle(Game.users);
+        int IDCount = 0;
+        for (User user : Game.users){
+            user.userID = IDCount;
+            IDCount++;
+        }
         for (int i = 0; i < Game.users.size(); i++) {
             int tempX = PositionToCoord(playerPositions[i])[0];
             int tempY = PositionToCoord(playerPositions[i])[1];
@@ -146,11 +172,6 @@ public class GridGame {
                 }
             }
         }
-        int IDCount = 0;
-        for (User user : Game.users){
-            user.userID = IDCount;
-            IDCount++;
-        }
 
 
         int userAssignCount = 0;
@@ -158,31 +179,18 @@ public class GridGame {
             for (int columnInt = 0; columnInt < theGrid[row].length ; columnInt++) {
                 if (theGrid[row][columnInt] == 100) {
                     theGrid[row][columnInt] = Game.users.get(userAssignCount).userID + 1;
-                    System.out.println(Game.users.get(userAssignCount).name + " " + columnInt + "," + row + " The ID is:" + Game.users.get(userAssignCount).userID);
                     Game.users.get(userAssignCount).currentDirection = resetDirection(Game.users.get(userAssignCount).userID);
                     userAssignCount++;
                 }
             }
         }
-
-
-        for (int j = 0; j < theGrid[0].length; j++) {
-            System.out.print("\n");
-            for (int f = 0; f < theGrid.length; f++) {
-                System.out.print(theGrid[j][f] + " ");
-
-            }
-        }
-        ClientUI client = new ClientUI();
     }
 
     public void runGame(){
+        positionUsers();
         timer.scheduleAtFixedRate(tsk, 0, 35);
     }
 
-    public GridGame(){
-
-    }
 }
 
 

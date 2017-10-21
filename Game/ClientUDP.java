@@ -14,7 +14,7 @@ public class ClientUDP {
             DatagramPacket recievePacket = new DatagramPacket(messageBuffer, 1024);
             socket.receive(recievePacket);
 
-            return new String(messageBuffer);
+            return new String(messageBuffer).trim();
         }
         catch (Exception e){return "";}
 
