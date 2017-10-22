@@ -27,6 +27,7 @@ public class GridGame {
                 }
             }
         }
+        System.out.println(messageString);
         return messageString;
     }
 
@@ -36,99 +37,72 @@ public class GridGame {
         @Override
         public void run() {
             secondsPassed++;
+            int tempUserIndex = 0;
             for (int row = 0; row < theGrid.length; row++) {
                 for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                    if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != 100){
-                        if (Game.users.get(theGrid[row][columnInt]-1).currentDirection == 0){
-                            try {
-                                theGrid[row - 1][columnInt] = Game.users.get(theGrid[row][columnInt]-1).userID;
+                    if (theGrid[row][columnInt] < 21 && theGrid[row][columnInt] > 0){
+                        int userCount = 0;
+                        for(User user: Game.users){
+                            if((theGrid[row][columnInt]) == user.userID){
+                                tempUserIndex = userCount;
                             }
-                            catch (ArrayIndexOutOfBoundsException e){
-                                theGrid[row][columnInt] = 0;
-                            }
-                            if (Game.users.get(theGrid[row][columnInt]-1).isJetWallOn) {
-                                theGrid[row][columnInt] = 100;
-                            }
-                            else{
-                                theGrid[row][columnInt] = 0;
-                            }
+                            userCount++;
                         }
-                        else if (Game.users.get(theGrid[row][columnInt]-1).currentDirection == 1){
-                            try {
-                                theGrid[row][columnInt - 1] = Game.users.get(theGrid[row][columnInt]-1).userID;
-                            }
-                            catch (ArrayIndexOutOfBoundsException e){
-                                theGrid[row][columnInt] = 0;
-                            }
-                            if (Game.users.get(theGrid[row][columnInt]-1).isJetWallOn) {
-                                theGrid[row][columnInt] = 100;
-                            }
-                            else{
-                                theGrid[row][columnInt] = 0;
-                            }
+
+                        if(Game.users.get(tempUserIndex).currentDirection == 0){
+                            theGrid[row][columnInt - 1] = theGrid[row][columnInt];
+                            theGrid[row][columnInt] = (theGrid[row][columnInt] + 30);
                         }
-                        else if (Game.users.get(theGrid[row][columnInt]-1).currentDirection == 2){
-                            try {
-                                theGrid[row + 1][columnInt] = Game.users.get(theGrid[row][columnInt]-1).userID;
-                            }
-                            catch (ArrayIndexOutOfBoundsException e){
-                                theGrid[row][columnInt] = 0;
-                            }
-                            if (Game.users.get(theGrid[row][columnInt]-1).isJetWallOn) {
-                                theGrid[row][columnInt] = 100;
-                            }
-                            else{
-                                theGrid[row][columnInt] = 0;
-                            }
+
+                        else if(Game.users.get(tempUserIndex).currentDirection == 1){
+                            theGrid[row - 1][columnInt] = theGrid[row][columnInt];
+                            theGrid[row][columnInt] = (theGrid[row][columnInt] + 30);
                         }
-                        else if (Game.users.get(theGrid[row][columnInt]-1).currentDirection == 2){
-                            try {
-                                theGrid[row][columnInt + 1] = Game.users.get(theGrid[row][columnInt]-1).userID;
-                            }
-                            catch (ArrayIndexOutOfBoundsException e){
-                                theGrid[row][columnInt] = 0;
-                            }
-                            if (Game.users.get(theGrid[row][columnInt]-1).isJetWallOn) {
-                                theGrid[row][columnInt] = 100;
-                            }
-                            else{
-                                theGrid[row][columnInt] = 0;
-                            }
+
+                        else if(Game.users.get(tempUserIndex).currentDirection == 2){
+                            theGrid[row][columnInt] = (theGrid[row][columnInt] + 30);
                         }
-                        try {
-                            ServerUDP.sendPackets("GRID UPDATE" + gridMessage());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+
+                        else if(Game.users.get(tempUserIndex).currentDirection == 0){
+                            theGrid[row - 1][columnInt] = theGrid[row][columnInt];
+                            theGrid[row][columnInt] = (theGrid[row][columnInt] + 30);
                         }
                     }
                 }
             }
-
+            try {
+                ServerUDP.sendPackets(gridMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     };
 
 
     private static int resetDirection(int userID){
-
         if (userID == 7 || userID == 9 || userID == 11 || userID == 13 || userID == 15){
+            System.out.println("User " + Game.users.get(userID - 1).userID + "'s direction is 0/left");
             return 0;
         }
 
-        else if (userID == 1 || userID == 2 || userID == 3 || userID == 4 || userID == 5){
-            return 3;
+        else if (userID == 16 || userID == 17 || userID == 18 || userID == 19 || userID == 20){
+            System.out.println("User " + Game.users.get(userID - 1).userID + "'s direction is 1/up");
+            return 1;
         }
 
         else if (userID == 6 || userID == 8 || userID == 10 || userID == 12 || userID == 14){
+            System.out.println("User " + Game.users.get(userID - 1).userID + "'s direction is 2/right");
             return 2;
         }
 
-        else if (userID == 16 || userID == 17 || userID == 18 || userID == 19 || userID == 20){
+        else if (userID == 1 || userID == 2 || userID == 3 || userID == 4 || userID == 5){
+            System.out.println("User " + Game.users.get(userID - 1).userID + "'s direction is 3/down");
             return 3;
         }
 
         else{
-            return 1;
+            return 0;
         }
     }
 
@@ -160,13 +134,15 @@ public class GridGame {
             IDCount++;
         }
         for (int i = 0; i < Game.users.size(); i++) {
-            int tempX = PositionToCoord(playerPositions[i])[0];
-            int tempY = PositionToCoord(playerPositions[i])[1];
+            int tempY = PositionToCoord(playerPositions[i])[0];
+            int tempX = PositionToCoord(playerPositions[i])[1];
+            int tempCounter = 0;
             for (int row = 0; row < theGrid.length; row++) {
                 for (int column = 0; column < theGrid[row].length; column++) {
-                    if (row == tempX) {
-                        if (column == tempY) {
-                            theGrid[row][column] = 100;
+                    if (row == tempY) {
+                        if (column == tempX) {
+                            tempCounter++;
+                            theGrid[row][column] = tempCounter;
                         }
                     }
                 }
@@ -177,9 +153,9 @@ public class GridGame {
         int userAssignCount = 0;
         for (int row = 0; row < theGrid.length; row++) {
             for (int columnInt = 0; columnInt < theGrid[row].length ; columnInt++) {
-                if (theGrid[row][columnInt] == 100) {
-                    theGrid[row][columnInt] = Game.users.get(userAssignCount).userID + 1;
-                    Game.users.get(userAssignCount).currentDirection = resetDirection(Game.users.get(userAssignCount).userID);
+                if (theGrid[row][columnInt] != 0) {
+                    User tempUser = Game.users.get(userAssignCount);
+                    tempUser.currentDirection = resetDirection(tempUser.userID + 1);
                     userAssignCount++;
                 }
             }
@@ -188,7 +164,7 @@ public class GridGame {
 
     public void runGame(){
         positionUsers();
-        timer.scheduleAtFixedRate(tsk, 0, 35);
+        timer.scheduleAtFixedRate(tsk, 0, 200);
     }
 
 }

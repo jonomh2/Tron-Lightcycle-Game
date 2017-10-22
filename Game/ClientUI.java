@@ -31,8 +31,8 @@ public class ClientUI extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
         Game.users.add(new User("User 20", 1, 2, 0, true, "blue"));
-        timer.scheduleAtFixedRate(tsk, 0, 10);
-        timer.scheduleAtFixedRate(repaintGrid, 0, 35);
+        timer.scheduleAtFixedRate(tsk, 0, 100);
+        timer.scheduleAtFixedRate(repaintGrid, 0, 50);
 
     }
 
@@ -67,10 +67,17 @@ public class ClientUI extends JFrame {
             String[] parts = message.split("/");
             for (String i : parts) {
                 String[] coordinates = i.split("-");
-                int count = 0;
-                for (String g : coordinates) {
-                    intMessage[count] = Integer.parseInt(g);
-                    count++;
+                for (int g = 0; g < coordinates.length; g++) {
+                    try {
+                        System.out.println("before assignment:" + intMessage[g]);
+                        intMessage[g] = Integer.parseInt(coordinates[g]);
+                        System.out.println("after assignment:" + intMessage[g]);
+                    }
+                    catch (Exception e){
+                        System.out.println("error1");
+                        System.out.println("error num:" + intMessage[g]);
+                        e.printStackTrace();
+                    }
                 }
                 drawGame(intMessage);
             }
