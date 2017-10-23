@@ -30,9 +30,8 @@ public class ClientUI extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
-        Game.users.add(new User("User 20", 1, 2, 0, true, "blue"));
         timer.scheduleAtFixedRate(tsk, 0, 100);
-        timer.scheduleAtFixedRate(repaintGrid, 0, 50);
+        timer.scheduleAtFixedRate(repaintGrid, 0, 200);
 
     }
 
@@ -63,21 +62,13 @@ public class ClientUI extends JFrame {
     public static void convertMessage(String message) {
         int[] intMessage = new int[3];
         if (message.contains("GRID UPDATE")) {
+            System.out.println(message);
             message = message.substring(12);
             String[] parts = message.split("/");
             for (String i : parts) {
                 String[] coordinates = i.split("-");
                 for (int g = 0; g < coordinates.length; g++) {
-                    try {
-                        System.out.println("before assignment:" + intMessage[g]);
                         intMessage[g] = Integer.parseInt(coordinates[g]);
-                        System.out.println("after assignment:" + intMessage[g]);
-                    }
-                    catch (Exception e){
-                        System.out.println("error1");
-                        System.out.println("error num:" + intMessage[g]);
-                        e.printStackTrace();
-                    }
                 }
                 drawGame(intMessage);
             }
@@ -85,6 +76,7 @@ public class ClientUI extends JFrame {
     }
 
     public static void drawGame(int[] coordinates) {
+        System.out.println(coordinates[0] + "is at " + coordinates[1] + ", " + coordinates[2]);
         clientGrid[coordinates[1]][coordinates[2]] = coordinates[0];
     }
 
@@ -93,22 +85,22 @@ public class ClientUI extends JFrame {
         Graphics2D g2 = (Graphics2D) g;
         for (int row = 0; row < clientGrid.length; row++) {
             for (int columnInt = 0; columnInt < clientGrid[row].length; columnInt++) {
-                if (clientGrid[row][columnInt] != 0) {
+                if(clientGrid[row][columnInt] != 0) {
                     if (clientGrid[row][columnInt] < 21) {
-                        tempRect = new Rectangle(row, columnInt, 10, 10);
+                        tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
                         g2.setColor(Color.blue);
+                        g2.fill(tempRect);
+                    } else if (clientGrid[row][columnInt] > 30 && clientGrid[row][columnInt] < 41) {
+                        tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
+                        g2.setColor(Color.cyan);
+                        g2.fill(tempRect);
+                    } else {
+                        tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
+                        g2.setColor(Color.magenta);
                         g2.fill(tempRect);
                     }
                 }
             }
         }
-//        if (Objects.equals(currentColour, "blue")){
-//            g2.setColor(Color.blue);
-//            g2.fill(tempRect);
-//        }
-//        else{
-//            g2.setColor(Color.MAGENTA);
-//            g2.fill(tempRect);
-//        }
     }
 }
