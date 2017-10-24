@@ -6,7 +6,11 @@ import java.util.stream.IntStream;
 public class GridGame {
     static int playerCount = Game.users.size();
 
+    private boolean isGameOver = false;
+
     public static int[][] theGrid = new int[101][101];
+
+    public static int[][] checkGrid = new int[101][101];
 
     public static String[] playerPositions = {"100,35", "100,65", "0,50", "0,20", "0,80", "50,0", "50,100", "80,0",
             "80,100", "20,0", "20,100", "100,20", "100,80", "0,35", "0,65", "35,100", "35,0", "65,0", "65,100", "100,50"};
@@ -22,14 +26,20 @@ public class GridGame {
         String messageString = "GRID UPDATE ";
         for (int row = 0; row < theGrid.length; row++) {
             for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != 100){
+                if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != checkGrid[row][columnInt]){ //if the value is not found in checkGrid (previous loop grid)
                     String tempString = theGrid[row][columnInt] + "-" + row + "-" + columnInt + "/";
                     messageString = String.format("%s%s", messageString, tempString);
                 }
             }
         }
-        System.out.println(messageString);
-        return messageString;
+        if (messageString.length() > 12){
+            return messageString;
+        }
+        else {
+            isGameOver = true;
+            timer.cancel();
+            return "GAME OVER";
+        }
     }
 
     private Timer timer = new Timer();
@@ -37,69 +47,81 @@ public class GridGame {
     private TimerTask tsk = new TimerTask() {
         @Override
         public void run() {
-            int repeatLoop = 0;
-            ArrayList<Integer> noRepeat = new ArrayList<Integer>();
-            noRepeat.clear();
-            secondsPassed++;
-            int tempUserIndex = 0;
-            for (int row = 0; row < theGrid.length; row++) { //runs through each number
-                for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                    if (theGrid[row][columnInt] < 21 && theGrid[row][columnInt] > 0){//if it's a player number
-                        int userCount = 0;
-                        boolean numRepeated = false;
-                        for (int num : noRepeat){
-                            if (theGrid[row][columnInt] == num){
-                                numRepeated = true;
-                                break;
+                //add old values to checkGrid for checking
+                for (int row = 0; row < theGrid.length; row++) {
+                    for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
+                        checkGrid[row][columnInt] = theGrid[row][columnInt];
+                    }
+                }
+                int repeatLoop = 0;
+                ArrayList<Integer> noRepeat = new ArrayList<Integer>();
+                noRepeat.clear();
+                secondsPassed++;
+                int tempUserIndex = 0;
+                for (int row = 0; row < theGrid.length; row++) { //runs through each number
+                    for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
+                        if (theGrid[row][columnInt] < 21 && theGrid[row][columnInt] > 0) { //if it's a player number
+                            int userCount = 0;
+                            boolean numRepeated = false;
+                            for (int num : noRepeat) {
+                                if (theGrid[row][columnInt] == num) {
+                                    numRepeated = true;
+                                    break;
+                                }
                             }
-                        }
-                        for (User user : Game.users) {//run through each user
-                            if ((theGrid[row][columnInt] - 1) == user.userID) {//if it's a particular user's number
-                                tempUserIndex = userCount;//assign that user's index to a variable//add checker for next lines
+                            for (User user : Game.users) {//run through each user
+                                if ((theGrid[row][columnInt] - 1) == user.userID) {//if it's a particular user's number
+                                    tempUserIndex = userCount;//assign that user's index to a variable//add checker for next lines
+                                } else {
+                                    userCount++;
+                                }
                             }
-                            else {
-                                userCount++;
-                            }
-                        }
-                        if (!numRepeated) {
-                            noRepeat.add(tempUserIndex + 1);
-                            if (Game.users.get(tempUserIndex).currentDirection == 0) {
-                                System.out.println(Game.users.get(tempUserIndex).userID + " is going left");
-                                theGrid[row][columnInt - 1] = theGrid[row][columnInt];
-                                theGrid[row][columnInt] += 30;
-                            }
-
-                            else if (Game.users.get(tempUserIndex).currentDirection == 1) {
-                                System.out.println(Game.users.get(tempUserIndex).userID + " is going up");
-                                theGrid[row - 1][columnInt] = theGrid[row][columnInt];
-                                theGrid[row][columnInt] += 30;
-                            }
-
-                            else if (Game.users.get(tempUserIndex).currentDirection == 2) {
-                                System.out.println(Game.users.get(tempUserIndex).userID + " is going right");
-                                theGrid[row][columnInt + 1] = theGrid[row][columnInt];
-                                theGrid[row][columnInt] += 30;
-                            }
-
-                            else if (Game.users.get(tempUserIndex).currentDirection == 3) {
-                                System.out.println(Game.users.get(tempUserIndex).userID + " is going down");
-                                theGrid[row + 1][columnInt] = theGrid[row][columnInt];
-                                theGrid[row][columnInt] += 30;
-                            }
-                            else{
-                                System.out.println("something failed to move");
+                            if (!numRepeated) {
+                                try {
+                                    noRepeat.add(tempUserIndex + 1);
+                                    if (Game.users.get(tempUserIndex).currentDirection == 0) {
+                                        if (theGrid[row][columnInt - 1] == 0) {
+                                            theGrid[row][columnInt - 1] = theGrid[row][columnInt];
+                                            theGrid[row][columnInt] += 30;
+                                        } else {
+                                            theGrid[row][columnInt] = 0;
+                                        }
+                                    } else if (Game.users.get(tempUserIndex).currentDirection == 1) {
+                                        if (theGrid[row - 1][columnInt] == 0) {
+                                            theGrid[row - 1][columnInt] = theGrid[row][columnInt];
+                                            theGrid[row][columnInt] += 30;
+                                        } else {
+                                            theGrid[row][columnInt] = 0;
+                                        }
+                                    } else if (Game.users.get(tempUserIndex).currentDirection == 2) {
+                                        if (theGrid[row][columnInt + 1] == 0) {
+                                            theGrid[row][columnInt + 1] = theGrid[row][columnInt];
+                                            theGrid[row][columnInt] += 30;
+                                        } else {
+                                            theGrid[row][columnInt] = 0;
+                                        }
+                                    } else if (Game.users.get(tempUserIndex).currentDirection == 3) {
+                                        if (theGrid[row + 1][columnInt] == 0) {
+                                            theGrid[row + 1][columnInt] = theGrid[row][columnInt];
+                                            theGrid[row][columnInt] += 30;
+                                        } else {
+                                            theGrid[row][columnInt] = 0;
+                                        }
+                                    }
+                                } catch (ArrayIndexOutOfBoundsException e) {
+                                    theGrid[row][columnInt] = 0;
+                                }
                             }
                         }
                     }
                 }
+                try {
+                    System.out.println(gridMessage());
+                    ServerUDP.sendPackets(gridMessage());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            try {
-                ServerUDP.sendPackets(gridMessage());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
     };
 
 
@@ -182,13 +204,6 @@ public class GridGame {
                 }
             }
         }
-
-//        for (int row = 0; row < theGrid.length; row++) {
-//            System.out.println();
-//            for (int columnInt = 0; columnInt < theGrid[row].length ; columnInt++) {
-//                System.out.print(theGrid[row][columnInt] + " ");
-//            }
-//            }
     }
 
     public void runGame(){

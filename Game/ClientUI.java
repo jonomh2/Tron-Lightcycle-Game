@@ -60,6 +60,7 @@ public class ClientUI extends JFrame {
     }
 
     public static void convertMessage(String message) {
+        //fix this
         int[] intMessage = new int[3];
         if (message.contains("GRID UPDATE")) {
             System.out.println(message);
@@ -68,39 +69,54 @@ public class ClientUI extends JFrame {
             for (String i : parts) {
                 String[] coordinates = i.split("-");
                 for (int g = 0; g < coordinates.length; g++) {
-                        intMessage[g] = Integer.parseInt(coordinates[g]);
+                    intMessage[g] = Integer.parseInt(coordinates[g]);
                 }
                 drawGame(intMessage);
             }
         }
+        else if (message.contains("GAME OVER")){
+            for (int row = 0; row < clientGrid.length; row++) {
+                for (int columnInt = 0; columnInt < clientGrid[row].length; columnInt++) {
+                    clientGrid[row][columnInt] = 0;
+                }
+            }
+            JOptionPane.showMessageDialog(null, "Game over, thanks for playing. Press OK to quit.");
+            System.exit(0);
+        }
     }
 
     public static void drawGame(int[] coordinates) {
-        System.out.println(coordinates[0] + "is at " + coordinates[1] + ", " + coordinates[2]);
+        System.out.println(coordinates[0] + " is at " + coordinates[1] + ", " + coordinates[2]);
         clientGrid[coordinates[1]][coordinates[2]] = coordinates[0];
     }
 
 
     public void paint(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        for (int row = 0; row < clientGrid.length; row++) {
-            for (int columnInt = 0; columnInt < clientGrid[row].length; columnInt++) {
-                if(clientGrid[row][columnInt] != 0) {
-                    if (clientGrid[row][columnInt] < 21) {
-                        tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
-                        g2.setColor(Color.blue);
-                        g2.fill(tempRect);
-                    } else if (clientGrid[row][columnInt] > 30 && clientGrid[row][columnInt] < 41) {
-                        tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
-                        g2.setColor(Color.cyan);
-                        g2.fill(tempRect);
-                    } else {
-                        tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
-                        g2.setColor(Color.magenta);
-                        g2.fill(tempRect);
+
+
+            Graphics2D g2 = (Graphics2D) g;
+            for (int row = 0; row < clientGrid.length; row++) {
+                for (int columnInt = 0; columnInt < clientGrid[row].length; columnInt++) {
+
+                    if (clientGrid[row][columnInt] != 0) {
+
+                        if (clientGrid[row][columnInt] < 21) {
+                            tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
+                            g2.setColor(Color.blue);
+                            g2.fill(tempRect);
+
+                        } else if (clientGrid[row][columnInt] > 30 && clientGrid[row][columnInt] < 51) {
+                            tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
+                            g2.setColor(Color.cyan);
+                            g2.fill(tempRect);
+
+                        } else {
+                            tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
+                            g2.setColor(Color.magenta);
+                            g2.fill(tempRect);
+                        }
                     }
                 }
             }
         }
     }
-}
