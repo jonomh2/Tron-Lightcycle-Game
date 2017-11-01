@@ -1,5 +1,5 @@
 import java.util.*;
-public class Game {
+public class UserJoin {
     public static List<User> users = new ArrayList<>();
 
     private static int secondsPassed = 0;
@@ -41,13 +41,13 @@ public class Game {
                     System.out.println("Welcome to the Grid, " + userName);
                 }
                 if (users.size() == 3){
-                    Game time = new Game();
+                    UserJoin time = new UserJoin();
                     time.start();
                 }
                 if(users.size() > 2 && users.size() < 20){
                     if(timeUp){
                         gameReady = true;
-                        System.out.println("Start Game Now.");
+                        System.out.println("Start UserJoin Now.");
                     }
                 else if(users.size() > 20){
                         gameReady = true;
