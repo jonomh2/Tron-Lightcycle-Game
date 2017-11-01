@@ -78,7 +78,7 @@ public class ClientGame extends JPanel {
                     clientGrid[row][columnInt] = 0;
                 }
             }
-            JOptionPane.showMessageDialog(null, "UserJoin over, thanks for playing. Press OK to quit.");
+            JOptionPane.showMessageDialog(null, "Game over, thanks for playing. Press OK to quit.");
             System.exit(0);
         }
     }

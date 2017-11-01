@@ -1,6 +1,7 @@
 import java.util.*;
 
 public class GridGame {
+
     static int playerCount = UserJoin.users.size();
 
     private boolean isGameOver = false;
@@ -145,26 +146,26 @@ public class GridGame {
     }
 
     public static void positionUsers() {
-//        UserJoin.users.add(new User("User 1", 1, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 2", 2, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 3", 3, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 4", 4, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 5", 5, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 6", 6, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 7", 7, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 8", 8, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 9", 9, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 10", 10, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 11", 11, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 12", 12, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 13", 13, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 14", 14, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 15", 15, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 16", 16, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 17", 17, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 18", 18, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 19", 19, 2,  0, true, "blue"));
-//        UserJoin.users.add(new User("User 20", 20, 2,  0, true, "blue"));
+//        UserJoin.users.add(new User("User 1", 1, 2,  0, true));
+//        UserJoin.users.add(new User("User 2", 2, 2,  0, true));
+//        UserJoin.users.add(new User("User 3", 3, 2,  0, true));
+//        UserJoin.users.add(new User("User 4", 4, 2,  0, true));
+//        UserJoin.users.add(new User("User 5", 5, 2,  0, true));
+//        UserJoin.users.add(new User("User 6", 6, 2,  0, true));
+//        UserJoin.users.add(new User("User 7", 7, 2,  0, true));
+//        UserJoin.users.add(new User("User 8", 8, 2,  0, true));
+//        UserJoin.users.add(new User("User 9", 9, 2,  0, true));
+//        UserJoin.users.add(new User("User 10", 10, 2,  0, true));`
+//        UserJoin.users.add(new User("User 11", 11, 2,  0, true));
+//        UserJoin.users.add(new User("User 12", 12, 2,  0, true));
+//        UserJoin.users.add(new User("User 13", 13, 2,  0, true));
+//        UserJoin.users.add(new User("User 14", 14, 2,  0, true));
+//        UserJoin.users.add(new User("User 15", 15, 2,  0, true));
+//        UserJoin.users.add(new User("User 16", 16, 2,  0, true));
+//        UserJoin.users.add(new User("User 17", 17, 2,  0, true));
+//        UserJoin.users.add(new User("User 18", 18, 2,  0, true));
+//        UserJoin.users.add(new User("User 19", 19, 2,  0, true));
+//        UserJoin.users.add(new User("User 20", 20, 2,  0, true));
         Collections.shuffle(UserJoin.users);
         int IDCount = 0;
         for (User user : UserJoin.users){
@@ -199,7 +200,6 @@ public class GridGame {
     }
 
     public void runGame(){
-        UserJoin.init();
         positionUsers();
         timer.scheduleAtFixedRate(tsk, 0, 200);
     }

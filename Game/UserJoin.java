@@ -13,6 +13,8 @@ public class UserJoin {
             if (secondsPassed == 10){
                 System.out.println("Time's up.");
                 timeUp = true;
+                GridGame game = new GridGame();
+                game.runGame();
             }
         }
     };
@@ -36,7 +38,7 @@ public class UserJoin {
                     if (users.size() >= 3){
                         secondsPassed = 0;
                     }
-                    users.add(new User(userName, IDCount, 2, 1, true, "blue"));
+                    users.add(new User(userName, IDCount, 2, 1, true));
                     System.out.println("(" + users.size() + "/20) users have joined.");
                     System.out.println("Welcome to the Grid, " + userName);
                 }
@@ -47,7 +49,7 @@ public class UserJoin {
                 if(users.size() > 2 && users.size() < 20){
                     if(timeUp){
                         gameReady = true;
-                        System.out.println("Start UserJoin Now.");
+                        System.out.println("Start game now.");
                     }
                 else if(users.size() > 20){
                         gameReady = true;
