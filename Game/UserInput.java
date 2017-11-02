@@ -47,7 +47,7 @@ public class UserInput extends JFrame implements ActionListener{
 
             try {
                 ClientUDP.sendPackets("ADD USER " + userName); //TODO: Fix this, figure out graphics glitch
-                this.dispose();
+                setVisible(false);
         }
 
             catch (Exception e1) {
@@ -59,5 +59,7 @@ public class UserInput extends JFrame implements ActionListener{
             JOptionPane.showMessageDialog(null, "Please enter a username.");
         }
     }
+
+
 
 }

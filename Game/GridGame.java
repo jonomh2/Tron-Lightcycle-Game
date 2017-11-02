@@ -4,6 +4,8 @@ public class GridGame {
 
     static int playerCount = UserJoin.users.size();
 
+    private String clientMessage;
+
     private boolean isGameOver = false;
 
     public static int[][] theGrid = new int[101][101];
@@ -40,7 +42,87 @@ public class GridGame {
         }
     }
 
+
     private Timer timer = new Timer();
+
+    private TimerTask clientInput = new TimerTask() {
+        @Override
+        public void run() {
+            int tempUserID = 0;
+            int tempDirection;
+
+            clientMessage = ServerUDP.recieveClientPackets();
+            if (clientMessage.contains("DIRECTION")) {
+                if (clientMessage.length() == 18) {
+                    tempUserID = clientMessage.charAt(5);
+                    tempDirection = clientMessage.charAt(17);
+                }
+                else{
+                   tempUserID = clientMessage.charAt(5) + clientMessage.charAt(6);
+                    tempDirection = clientMessage.charAt(18);
+                }
+                for (User user: UserJoin.users){
+                    if (user.userID == tempUserID){
+                        if (tempDirection == 0){
+                            if (user.currentDirection == 2){
+                                tempDirection = 0;
+                            }
+                        }
+                        else if (tempDirection == 2){
+                            if (user.currentDirection == 0){
+                                tempDirection = 2;
+                            }
+                        }
+                        else if (tempDirection == 1){
+                            if (user.currentDirection == 3){
+                                tempDirection = 1;
+                            }
+                        }
+                        else if (tempDirection == 3){
+                            if (user.currentDirection == 1){
+                                tempDirection = 3;
+                            }
+                        }
+                        else{
+                            user.currentDirection = tempDirection;
+                        }
+                    }
+                }
+            }
+            else if(clientMessage.contains("LIGHTWALLTOGGLE")) {
+                for (User user : UserJoin.users) {
+                    if (tempUserID == user.userID) {
+                        if (user.isJetWallOn) {
+                            user.isJetWallOn = false;
+                        } else {
+                            user.isJetWallOn = true;
+                        }
+                    }
+                }
+            }
+            else if (clientMessage.contains("SPEEDUPDATE")) {
+                    if (clientMessage.contains("SLOW")) {
+                        for (User user : UserJoin.users) {
+                            if(tempUserID == user.userID) {
+                                if (user.currentSpeed != 0) {
+                                    user.currentSpeed -= 1;
+                                }
+                            }
+                        }
+                    }
+
+                else if (clientMessage.contains("SPEEDUP")) {
+                        for (User user : UserJoin.users) {
+                            if(tempUserID == user.userID){
+                                if (user.currentSpeed != 2) {
+                                    user.currentSpeed += 1;
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+    };
 
     private TimerTask tsk = new TimerTask() {
         @Override
@@ -78,30 +160,42 @@ public class GridGame {
                                 try {
                                     noRepeat.add(tempUserIndex + 1);
                                     if (UserJoin.users.get(tempUserIndex).currentDirection == 0) {
-                                        if (theGrid[row][columnInt - 1] == 0) {
-                                            theGrid[row][columnInt - 1] = theGrid[row][columnInt];
+                                        if (theGrid[row][columnInt - UserJoin.users.get(tempUserIndex).currentSpeed] == 0) {
+                                            theGrid[row][columnInt - UserJoin.users.get(tempUserIndex).currentSpeed] = theGrid[row][columnInt];
                                             theGrid[row][columnInt] += 30;
+                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2){
+                                                theGrid[row][columnInt - 1] = theGrid[row - 2][columnInt];
+                                            }
                                         } else {
                                             theGrid[row][columnInt] = 0;
                                         }
                                     } else if (UserJoin.users.get(tempUserIndex).currentDirection == 1) {
-                                        if (theGrid[row - 1][columnInt] == 0) {
-                                            theGrid[row - 1][columnInt] = theGrid[row][columnInt];
+                                        if (theGrid[row - UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] == 0) {
+                                            theGrid[row - UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] = theGrid[row][columnInt];
                                             theGrid[row][columnInt] += 30;
+                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2){
+                                                theGrid[row - 1][columnInt] = theGrid[row - 2][columnInt];
+                                            }
                                         } else {
                                             theGrid[row][columnInt] = 0;
                                         }
                                     } else if (UserJoin.users.get(tempUserIndex).currentDirection == 2) {
-                                        if (theGrid[row][columnInt + 1] == 0) {
-                                            theGrid[row][columnInt + 1] = theGrid[row][columnInt];
+                                        if (theGrid[row][columnInt + UserJoin.users.get(tempUserIndex).currentSpeed] == 0) {
+                                            theGrid[row][columnInt + UserJoin.users.get(tempUserIndex).currentSpeed] = theGrid[row][columnInt];
                                             theGrid[row][columnInt] += 30;
+                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2){
+                                                theGrid[row][columnInt + 1] = theGrid[row][columnInt + 2];
+                                            }
                                         } else {
                                             theGrid[row][columnInt] = 0;
                                         }
                                     } else if (UserJoin.users.get(tempUserIndex).currentDirection == 3) {
-                                        if (theGrid[row + 1][columnInt] == 0) {
-                                            theGrid[row + 1][columnInt] = theGrid[row][columnInt];
+                                        if (theGrid[row + UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] == 0) {
+                                            theGrid[row + UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] = theGrid[row][columnInt];
                                             theGrid[row][columnInt] += 30;
+                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2){
+                                                theGrid[row + 1][columnInt] = theGrid[row + 2][columnInt];
+                                            }
                                         } else {
                                             theGrid[row][columnInt] = 0;
                                         }
@@ -202,6 +296,7 @@ public class GridGame {
     public void runGame(){
         positionUsers();
         timer.scheduleAtFixedRate(tsk, 0, 200);
+
     }
 
 }

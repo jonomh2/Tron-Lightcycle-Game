@@ -6,6 +6,8 @@ public class UserJoin {
     private static boolean timeUp = false;
     private static boolean newPlayerJoin = true;
 
+    //TODO: Fix UserJoin class
+
     Timer timer = new Timer();
     TimerTask task = new TimerTask() {
         public void run() {
@@ -13,6 +15,11 @@ public class UserJoin {
             if (secondsPassed == 10){
                 System.out.println("Time's up.");
                 timeUp = true;
+                try {
+                    ServerUDP.sendPackets("GAME START");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 GridGame game = new GridGame();
                 game.runGame();
             }
@@ -37,14 +44,17 @@ public class UserJoin {
                     String userName = clientJoin.substring(9);
                     if (users.size() >= 3){
                         secondsPassed = 0;
+                        System.out.println("Timer restart");
                     }
-                    users.add(new User(userName, IDCount, 2, 1, true));
+                    users.add(new User(userName, IDCount, 1, 1, true));
                     System.out.println("(" + users.size() + "/20) users have joined.");
                     System.out.println("Welcome to the Grid, " + userName);
+                    ServerUDP.sendPackets("USERID " + users.size());
                 }
                 if (users.size() == 3){
                     UserJoin time = new UserJoin();
                     time.start();
+                    System.out.println("Timer init");
                 }
                 if(users.size() > 2 && users.size() < 20){
                     if(timeUp){
