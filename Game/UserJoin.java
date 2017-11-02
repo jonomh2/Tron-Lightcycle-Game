@@ -47,6 +47,7 @@ public class UserJoin {
                         System.out.println("Timer restart");
                     }
                     users.add(new User(userName, IDCount, 1, 1, true));
+                    System.out.println(users.size());
                     System.out.println("(" + users.size() + "/20) users have joined.");
                     System.out.println("Welcome to the Grid, " + userName);
                     ServerUDP.sendPackets("USERID " + users.size());
@@ -54,7 +55,7 @@ public class UserJoin {
                 if (users.size() == 3){
                     UserJoin time = new UserJoin();
                     time.start();
-                    System.out.println("Timer init");
+                    break;
                 }
                 if(users.size() > 2 && users.size() < 20){
                     if(timeUp){

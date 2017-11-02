@@ -48,21 +48,21 @@ public class ClientUI extends JFrame implements KeyListener{
     JPanel gamePanel = new JPanel();
 
     public ClientUI() {
+        setVisible(true);
+        this.addKeyListener(this);
         mainPanel.setLayout(new BorderLayout());
         add(mainPanel);
-        mainPanel.setBackground(Color.lightGray);
         scorePanel.setBackground(Color.BLUE);
         mainPanel.add(scorePanel, BorderLayout.NORTH);
         gamePanel.add(new ClientGame());
+        mainPanel.add(gamePanel, BorderLayout.CENTER);
         setSize(1000, 1300);
         this.setLocationRelativeTo(null);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setVisible(true);
         new UserInput();
         getUserID();
         timer.scheduleAtFixedRate(sendPackets, 20, 30);
-        this.addKeyListener(this);
         repaint();
     }
 
@@ -81,17 +81,21 @@ public class ClientUI extends JFrame implements KeyListener{
     @Override
     public void keyTyped(KeyEvent event) {
         clientMessage = "";
-        if (event.getKeyCode() == KeyEvent.VK_RIGHT){
+        if (event.getKeyCode() == KeyEvent.VK_LEFT){
             clientMessage = "USER " + UserID + " DIRECTION " + 0;
+            System.out.println("left");
         }
-        else if (event.getKeyCode() == KeyEvent.VK_LEFT){
+        else if (event.getKeyCode() == KeyEvent.VK_RIGHT){
             clientMessage = "USER " + UserID + " DIRECTION " + 2;
+            System.out.println("right");
         }
         else if (event.getKeyCode() == KeyEvent.VK_UP){
             clientMessage = "USER " + UserID + " DIRECTION " + 1;
+            System.out.println("up");
         }
         else if (event.getKeyCode() == KeyEvent.VK_DOWN){
             clientMessage = "USER " + UserID + " DIRECTION " + 3;
+            System.out.println("down");
         }
         else if (event.getKeyCode() == KeyEvent.VK_S){
 

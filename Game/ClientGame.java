@@ -10,37 +10,22 @@ public class ClientGame extends JPanel {
     public static int[][] clientGrid = new int[101][101];
 
 
-    JPanel mainPanel = new JPanel();
-    JPanel scorePanel = new JPanel();
-    JPanel gamePanel = new JPanel();
-    private static String currentColour;
     public static Rectangle tempRect;
-    private Rectangle rectangle = new Rectangle();
-    private Rectangle coverRectangle = new Rectangle();
 
     private java.util.Timer timer = new Timer();
 
     public ClientGame() {
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(scorePanel, BorderLayout.NORTH);
-        mainPanel.add(gamePanel, BorderLayout.CENTER);
-        mainPanel.setBackground(Color.lightGray);
-        add(mainPanel);
-        setSize(GridGame.theGrid[0].length * 10, GridGame.theGrid.length * 10);
         setVisible(true);
+        setBackground(new Color(25, 25,25));
+        setSize(GridGame.theGrid[0].length * 10, GridGame.theGrid.length * 10);
         timer.scheduleAtFixedRate(tsk, 0, 100);
         timer.scheduleAtFixedRate(repaintGrid, 0, 200);
 
     }
 
-    private static boolean rectanglePlaced = false;
-
-    private int secondsPassed = 0;
-
     private TimerTask tsk = new TimerTask() {
         @Override
         public void run() {
-            secondsPassed++;
             receiveGameUpdates();
         }
     };
@@ -90,7 +75,7 @@ public class ClientGame extends JPanel {
 
 
     public void paint(Graphics g) {
-
+            super.paintComponent(g);
 
             Graphics2D g2 = (Graphics2D) g;
             for (int row = 0; row < clientGrid.length; row++) {

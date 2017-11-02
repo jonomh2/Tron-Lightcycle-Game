@@ -46,7 +46,7 @@ public class UserInput extends JFrame implements ActionListener{
         if (!Objects.equals(userName, "")){
 
             try {
-                ClientUDP.sendPackets("ADD USER " + userName); //TODO: Fix this, figure out graphics glitch
+                ClientUDP.sendPackets("ADD USER " + userName);
                 setVisible(false);
         }
 
