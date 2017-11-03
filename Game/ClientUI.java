@@ -46,12 +46,15 @@ public class ClientUI extends JFrame implements KeyListener{
     JPanel mainPanel = new JPanel();
     JPanel scorePanel = new JPanel();
     JPanel gamePanel = new JPanel();
+    JLabel highScore = new JLabel("HIGHSCORE: \n0");
 
     public ClientUI() {
         this.addKeyListener(this);
         mainPanel.setLayout(new BorderLayout());
         add(mainPanel);
-        scorePanel.setBackground(Color.BLUE);
+        highScore.setFont(new Font("Courier New", Font.BOLD, 30));
+        scorePanel.add(highScore);
+        scorePanel.setBackground(Color.cyan);
         mainPanel.add(scorePanel, BorderLayout.NORTH);
         gamePanel.add(new ClientGame());
         mainPanel.add(gamePanel, BorderLayout.CENTER);
@@ -75,6 +78,7 @@ public class ClientUI extends JFrame implements KeyListener{
             if (message.contains("USERID")) {
                 message = message.substring(7);
                 UserID = Integer.parseInt(message);
+                ClientGame.playerID = UserID;
                 System.out.println(UserID);
             }
 

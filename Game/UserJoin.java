@@ -51,7 +51,7 @@ public class UserJoin {
                     System.out.println("Welcome to the Grid, " + userName);
                     ServerUDP.sendPackets("USERID " + users.size());
                 }
-                if (users.size() == 3){
+                if (users.size() == 2){
                     UserJoin time = new UserJoin();
                     time.start();
                     break;

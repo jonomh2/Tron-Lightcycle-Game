@@ -20,24 +20,42 @@ public class GridGame {
         return Arrays.stream(stringCoords).mapToInt(Integer::parseInt).toArray();
     }
 
+
+    int gameWinnerID;
     private int secondsPassed = 0;
 
     public String gridMessage(){
+        int playerLeftCount = 0;
         String messageString = "GRID UPDATE ";
         for (int row = 0; row < theGrid.length; row++) {
             for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != checkGrid[row][columnInt]){ //if the value is not found in checkGrid (previous loop grid)
+                if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != checkGrid[row][columnInt]){//if the value is not found in checkGrid (previous loop grid)
+                    if (theGrid[row][columnInt] < 21){
+                        playerLeftCount++;
+                    }
                     String tempString = theGrid[row][columnInt] + "-" + row + "-" + columnInt + "/";
                     messageString = String.format("%s%s", messageString, tempString);
                 }
             }
         }
-        if (messageString.length() > 12){
+        if (playerLeftCount >= 2){
             return messageString;
         }
         else {
             isGameOver = true;
             timer.cancel();
+            for (int row = 0; row < theGrid.length; row++) {
+                for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
+                    if(theGrid[row][columnInt] > 0 && theGrid[row][columnInt] < 21){
+                        gameWinnerID = theGrid[row][columnInt];
+                    }
+                }
+            }
+            try {
+                ServerUDP.sendPackets("GAMEWIN " + gameWinnerID);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return "GAME OVER";
         }
     }
@@ -57,7 +75,6 @@ public class GridGame {
                 if (clientMessage.length() == 18) {
                     tempUserID = Character.getNumericValue(clientMessage.charAt(5));
                     tempDirection = Character.getNumericValue(clientMessage.charAt(17));
-                    System.out.println("User ID: :" + tempUserID + ":, User Direction: :" + tempDirection+ ":");
                 }
                 else{
                     tempUserID = Character.getNumericValue(clientMessage.charAt(5)) + Character.getNumericValue(clientMessage.charAt(6));
@@ -92,7 +109,7 @@ public class GridGame {
             }
             else if(clientMessage.contains("LIGHTWALLTOGGLE")) {
                 for (User user : UserJoin.users) {
-                    if (tempUserID == user.userID) {
+                    if (tempUserID - 1 == user.userID) {
                         if (user.isJetWallOn) {
                             user.isJetWallOn = false;
                         } else {
@@ -104,7 +121,7 @@ public class GridGame {
             else if (clientMessage.contains("SPEEDUPDATE")) {
                     if (clientMessage.contains("SLOW")) {
                         for (User user : UserJoin.users) {
-                            if(tempUserID == user.userID) {
+                            if(tempUserID - 1 == user.userID) {
                                 if (user.currentSpeed != 0) {
                                     user.currentSpeed -= 1;
                                 }
