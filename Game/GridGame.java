@@ -53,16 +53,19 @@ public class GridGame {
 
             clientMessage = ServerUDP.recieveClientPackets();
             if (clientMessage.contains("DIRECTION")) {
+                System.out.println(clientMessage);
                 if (clientMessage.length() == 18) {
-                    tempUserID = clientMessage.charAt(5);
-                    tempDirection = clientMessage.charAt(17);
+                    tempUserID = Character.getNumericValue(clientMessage.charAt(5));
+                    tempDirection = Character.getNumericValue(clientMessage.charAt(17));
+                    System.out.println("User ID: :" + tempUserID + ":, User Direction: :" + tempDirection+ ":");
                 }
                 else{
-                   tempUserID = clientMessage.charAt(5) + clientMessage.charAt(6);
-                    tempDirection = clientMessage.charAt(18);
+                    tempUserID = Character.getNumericValue(clientMessage.charAt(5)) + Character.getNumericValue(clientMessage.charAt(6));
+                    tempDirection = Character.getNumericValue(clientMessage.charAt(18));
                 }
                 for (User user: UserJoin.users){
-                    if (user.userID == tempUserID){
+                    System.out.println("User ID:" + user.userID + ", TempUSERID: " + tempUserID);
+                    if (user.userID == tempUserID - 1){
                         if (tempDirection == 0){
                             if (user.currentDirection == 2){
                                 tempDirection = 0;
@@ -83,9 +86,7 @@ public class GridGame {
                                 tempDirection = 3;
                             }
                         }
-                        else{
-                            user.currentDirection = tempDirection;
-                        }
+                        user.currentDirection = tempDirection;
                     }
                 }
             }
@@ -295,8 +296,8 @@ public class GridGame {
 
     public void runGame(){
         positionUsers();
-        timer.scheduleAtFixedRate(tsk, 0, 200);
-
+        timer.scheduleAtFixedRate(tsk, 20, 200);
+        timer.scheduleAtFixedRate(clientInput, 20, 10);
     }
 
 }

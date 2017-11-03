@@ -48,7 +48,6 @@ public class ClientUI extends JFrame implements KeyListener{
     JPanel gamePanel = new JPanel();
 
     public ClientUI() {
-        setVisible(true);
         this.addKeyListener(this);
         mainPanel.setLayout(new BorderLayout());
         add(mainPanel);
@@ -56,9 +55,13 @@ public class ClientUI extends JFrame implements KeyListener{
         mainPanel.add(scorePanel, BorderLayout.NORTH);
         gamePanel.add(new ClientGame());
         mainPanel.add(gamePanel, BorderLayout.CENTER);
-        setSize(1000, 1300);
+        setMinimumSize(new Dimension(1100, 1300));
+        setPreferredSize(new Dimension(1100, 1300));
+        gamePanel.setBackground(Color.BLACK);
         this.setLocationRelativeTo(null);
-        setResizable(false);
+        pack();
+        setVisible(true);
+        setResizable(true);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         new UserInput();
         getUserID();
@@ -79,34 +82,31 @@ public class ClientUI extends JFrame implements KeyListener{
     }
 
     @Override
-    public void keyTyped(KeyEvent event) {
+    public void keyPressed(KeyEvent event) {
         clientMessage = "";
         if (event.getKeyCode() == KeyEvent.VK_LEFT){
-            clientMessage = "USER " + UserID + " DIRECTION " + 0;
             System.out.println("left");
+            clientMessage = "USER " + UserID + " DIRECTION " + 0;
         }
         else if (event.getKeyCode() == KeyEvent.VK_RIGHT){
-            clientMessage = "USER " + UserID + " DIRECTION " + 2;
             System.out.println("right");
+            clientMessage = "USER " + UserID + " DIRECTION " + 2;
         }
         else if (event.getKeyCode() == KeyEvent.VK_UP){
-            clientMessage = "USER " + UserID + " DIRECTION " + 1;
             System.out.println("up");
+            clientMessage = "USER " + UserID + " DIRECTION " + 1;
         }
         else if (event.getKeyCode() == KeyEvent.VK_DOWN){
-            clientMessage = "USER " + UserID + " DIRECTION " + 3;
             System.out.println("down");
+            clientMessage = "USER " + UserID + " DIRECTION " + 3;
         }
         else if (event.getKeyCode() == KeyEvent.VK_S){
-
             clientMessage = "USER " + UserID + " LIGHTWALLTOGGLE";
         }
         else if (event.getKeyCode() == KeyEvent.VK_A){
-
             clientMessage = "USER " + UserID + " SPEEDUPDATE SLOW";
         }
         else if (event.getKeyCode() == KeyEvent.VK_D){
-
             clientMessage = "USER " + UserID + " SPEEDUPDATE SPEEDUP";
         }
         try {
@@ -117,7 +117,7 @@ public class ClientUI extends JFrame implements KeyListener{
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyTyped(KeyEvent e) {
 
     }
 

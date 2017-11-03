@@ -6,7 +6,6 @@ public class UserJoin {
     private static boolean timeUp = false;
     private static boolean newPlayerJoin = true;
 
-    //TODO: Fix UserJoin class
 
     Timer timer = new Timer();
     TimerTask task = new TimerTask() {

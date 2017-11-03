@@ -17,9 +17,9 @@ public class ClientGame extends JPanel {
     public ClientGame() {
         setVisible(true);
         setBackground(new Color(25, 25,25));
-        setSize(GridGame.theGrid[0].length * 10, GridGame.theGrid.length * 10);
-        timer.scheduleAtFixedRate(tsk, 0, 100);
-        timer.scheduleAtFixedRate(repaintGrid, 0, 200);
+        setPreferredSize(new Dimension(1000, 1000));
+        timer.scheduleAtFixedRate(tsk, 0, 20);
+        timer.scheduleAtFixedRate(repaintGrid, 10, 10);
 
     }
 
@@ -74,8 +74,8 @@ public class ClientGame extends JPanel {
     }
 
 
-    public void paint(Graphics g) {
-            super.paintComponent(g);
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
             Graphics2D g2 = (Graphics2D) g;
             for (int row = 0; row < clientGrid.length; row++) {
