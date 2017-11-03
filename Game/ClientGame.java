@@ -12,6 +12,8 @@ public class ClientGame extends JPanel {
     public static Color playerColour;
     public static int playerID;
 
+
+    public static String playerName;
     public static Rectangle tempRect;
 
     private java.util.Timer timer = new Timer();
@@ -64,12 +66,17 @@ public class ClientGame extends JPanel {
                     clientGrid[row][columnInt] = 0;
                 }
             }
-            JOptionPane.showMessageDialog(null, "Game over, thanks for playing. Press OK to quit.");
-            System.exit(0);
         }
         else if (message.contains("GAMEWIN")){
+            boolean playerWin = false;
             message = message.substring(8);
-            JOptionPane.showMessageDialog(null, "Player " + message + " wins! Congratulations.");
+            if (Objects.equals(message, playerName)){
+                JOptionPane.showMessageDialog(null, "Congratulations, you win!");
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "You lose! Player " + message + " wins.");
+            }
+            System.exit(0);
         }
     }
 
@@ -117,7 +124,7 @@ public class ClientGame extends JPanel {
 
                         } else if (clientGrid[row][columnInt] > 30 && clientGrid[row][columnInt] < 51) {
                             tempRect = new Rectangle(columnInt * 10, row * 10, 10, 10);
-                            g2.setColor(new Color(0, 154, 165));
+                            g2.setColor(new Color(184, 255, 253));
                             g2.fill(tempRect);
 
                         } else {

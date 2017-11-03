@@ -1,9 +1,10 @@
+import java.io.*;
 import java.util.*;
 
 public class GridGame {
 
     static int playerCount = UserJoin.users.size();
-
+    public static String workingDir = (System.getProperty("user.dir") + "\\Game\\");
     private String clientMessage;
 
     private boolean isGameOver = false;
@@ -24,13 +25,13 @@ public class GridGame {
     int gameWinnerID;
     private int secondsPassed = 0;
 
-    public String gridMessage(){
+    public String gridMessage() {
         int playerLeftCount = 0;
         String messageString = "GRID UPDATE ";
         for (int row = 0; row < theGrid.length; row++) {
             for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != checkGrid[row][columnInt]){//if the value is not found in checkGrid (previous loop grid)
-                    if (theGrid[row][columnInt] < 21){
+                if (theGrid[row][columnInt] != 0 && theGrid[row][columnInt] != checkGrid[row][columnInt]) {//if the value is not found in checkGrid (previous loop grid)
+                    if (theGrid[row][columnInt] < 21) {
                         playerLeftCount++;
                     }
                     String tempString = theGrid[row][columnInt] + "-" + row + "-" + columnInt + "/";
@@ -38,24 +39,31 @@ public class GridGame {
                 }
             }
         }
-        if (playerLeftCount >= 2){
+        if (playerLeftCount >= 2) {
             return messageString;
-        }
-        else {
+        } else {
+            String gameWinnerName = "";
             isGameOver = true;
             timer.cancel();
             for (int row = 0; row < theGrid.length; row++) {
                 for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                    if(theGrid[row][columnInt] > 0 && theGrid[row][columnInt] < 21){
+                    if (theGrid[row][columnInt] > 0 && theGrid[row][columnInt] < 21) {
                         gameWinnerID = theGrid[row][columnInt];
                     }
                 }
             }
             try {
-                ServerUDP.sendPackets("GAMEWIN " + gameWinnerID);
+                for (User user : UserJoin.users) {
+                    if (user.userID == gameWinnerID - 1) {
+                        gameWinnerName = user.name;
+                    }
+                }
+                ServerUDP.sendPackets("GAMEWIN " + gameWinnerName);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+
             return "GAME OVER";
         }
     }
@@ -73,71 +81,73 @@ public class GridGame {
             if (clientMessage.contains("DIRECTION")) {
                 System.out.println(clientMessage);
                 if (clientMessage.length() == 18) {
-                    tempUserID = Character.getNumericValue(clientMessage.charAt(5));
+                    tempUserID = Character.getNumericValue(clientMessage.charAt(5)) - 1;
                     tempDirection = Character.getNumericValue(clientMessage.charAt(17));
-                }
-                else{
-                    tempUserID = Character.getNumericValue(clientMessage.charAt(5)) + Character.getNumericValue(clientMessage.charAt(6));
+                } else {
+                    tempUserID = Character.getNumericValue(clientMessage.charAt(5)) + Character.getNumericValue(clientMessage.charAt(6)) - 1;
                     tempDirection = Character.getNumericValue(clientMessage.charAt(18));
                 }
-                for (User user: UserJoin.users){
+                for (User user : UserJoin.users) {
                     System.out.println("User ID:" + user.userID + ", TempUSERID: " + tempUserID);
-                    if (user.userID == tempUserID - 1){
-                        if (tempDirection == 0){
-                            if (user.currentDirection == 2){
+                    if (user.userID == tempUserID) {
+                        if (tempDirection == 0) {
+                            if (user.currentDirection == 2) {
                                 tempDirection = 0;
                             }
-                        }
-                        else if (tempDirection == 2){
-                            if (user.currentDirection == 0){
+                        } else if (tempDirection == 2) {
+                            if (user.currentDirection == 0) {
                                 tempDirection = 2;
                             }
-                        }
-                        else if (tempDirection == 1){
-                            if (user.currentDirection == 3){
+                        } else if (tempDirection == 1) {
+                            if (user.currentDirection == 3) {
                                 tempDirection = 1;
                             }
-                        }
-                        else if (tempDirection == 3){
-                            if (user.currentDirection == 1){
+                        } else if (tempDirection == 3) {
+                            if (user.currentDirection == 1) {
                                 tempDirection = 3;
                             }
                         }
                         user.currentDirection = tempDirection;
                     }
                 }
-            }
-            else if(clientMessage.contains("LIGHTWALLTOGGLE")) {
+            } else if (clientMessage.contains("LIGHTWALLTOGGLE")) {
+                if (clientMessage.length() == 18) {
+                    tempUserID = Character.getNumericValue(clientMessage.charAt(5)) - 1;
+                } else {
+                    tempUserID = Character.getNumericValue(clientMessage.charAt(5)) + Character.getNumericValue(clientMessage.charAt(6)) - 1;
+                }
                 for (User user : UserJoin.users) {
-                    if (tempUserID - 1 == user.userID) {
+                    if (tempUserID == user.userID) {
                         if (user.isJetWallOn) {
+                            System.out.println("Jetwall off");
                             user.isJetWallOn = false;
                         } else {
+                            System.out.println("Jetwall on");
                             user.isJetWallOn = true;
                         }
                     }
                 }
-            }
-            else if (clientMessage.contains("SPEEDUPDATE")) {
-                    if (clientMessage.contains("SLOW")) {
-                        for (User user : UserJoin.users) {
-                            if(tempUserID - 1 == user.userID) {
-                                if (user.currentSpeed != 0) {
-                                    user.currentSpeed -= 1;
-                                }
-                            }
+            } else if (clientMessage.contains("SPEEDUPDATE")) {
+                if (clientMessage.length() == 18) {
+                    tempUserID = Character.getNumericValue(clientMessage.charAt(5));
+                } else {
+                    tempUserID = Character.getNumericValue(clientMessage.charAt(5)) + Character.getNumericValue(clientMessage.charAt(6));
+                }
+                if (clientMessage.contains("SLOW")) {
+                    for (User user : UserJoin.users) {
+                        if (tempUserID == user.userID) {
+                            System.out.println("slowing user: tempuserID: " + tempUserID + ", user.userID: " + user.userID);
+                            user.currentSpeed = 1;
                         }
                     }
-
-                else if (clientMessage.contains("SPEEDUP")) {
-                        for (User user : UserJoin.users) {
-                            if(tempUserID == user.userID){
-                                if (user.currentSpeed != 2) {
-                                    user.currentSpeed += 1;
-                                }
-                            }
+                } else if (clientMessage.contains("SPEEDUP")) {
+                    for (User user : UserJoin.users) {
+                        if (tempUserID == user.userID){
+                            System.out.println("speedingup user: tempuserID: " + tempUserID + ", user.userID: " + user.userID);
+                            user.currentSpeed = 2;
                         }
                     }
+                }
             }
         }
     };
@@ -145,142 +155,132 @@ public class GridGame {
     private TimerTask tsk = new TimerTask() {
         @Override
         public void run() {
-                //add old values to checkGrid for checking
-                for (int row = 0; row < theGrid.length; row++) {
-                    for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                        checkGrid[row][columnInt] = theGrid[row][columnInt];
-                    }
+            //add old values to checkGrid for checking
+            for (int row = 0; row < theGrid.length; row++) {
+                for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
+                    checkGrid[row][columnInt] = theGrid[row][columnInt];
                 }
-                int repeatLoop = 0;
-                ArrayList<Integer> noRepeat = new ArrayList<Integer>();
-                noRepeat.clear();
-                secondsPassed++;
-                int tempUserIndex = 0;
-                for (int row = 0; row < theGrid.length; row++) { //runs through each number
-                    for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
-                        if (theGrid[row][columnInt] < 21 && theGrid[row][columnInt] > 0) { //if it's a player number
-                            int userCount = 0;
-                            boolean numRepeated = false;
-                            for (int num : noRepeat) {
-                                if (theGrid[row][columnInt] == num) {
-                                    numRepeated = true;
-                                    break;
-                                }
+            }
+            int repeatLoop = 0;
+            ArrayList<Integer> noRepeat = new ArrayList<Integer>();
+            noRepeat.clear();
+            secondsPassed++;
+            int tempUserIndex = 0;
+            for (int row = 0; row < theGrid.length; row++) { //runs through each number
+                for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
+                    if (theGrid[row][columnInt] < 21 && theGrid[row][columnInt] > 0) { //if it's a player number
+                        int userCount = 0;
+                        boolean numRepeated = false;
+                        for (int num : noRepeat) {
+                            if (theGrid[row][columnInt] == num) {
+                                numRepeated = true;
+                                break;
                             }
-                            for (User user : UserJoin.users) {//run through each user
-                                if ((theGrid[row][columnInt] - 1) == user.userID) {//if it's a particular user's number
-                                    tempUserIndex = userCount;//assign that user's index to a variable//add checker for next lines
-                                } else {
-                                    userCount++;
-                                }
+                        }
+                        for (User user : UserJoin.users) {//run through each user
+                            if ((theGrid[row][columnInt] - 1) == user.userID) {//if it's a particular user's number
+                                tempUserIndex = userCount;//assign that user's index to a variable//add checker for next lines
+                            } else {
+                                userCount++;
                             }
-                            if (!numRepeated) {
-                                try {
-                                    noRepeat.add(tempUserIndex + 1);
-                                    if (UserJoin.users.get(tempUserIndex).currentDirection == 0) {
-                                        if (theGrid[row][columnInt - UserJoin.users.get(tempUserIndex).currentSpeed] == 0) {
-                                            theGrid[row][columnInt - UserJoin.users.get(tempUserIndex).currentSpeed] = theGrid[row][columnInt];
+                        }
+                        if (!numRepeated) {
+                            try {
+                                noRepeat.add(tempUserIndex + 1);
+                                if (UserJoin.users.get(tempUserIndex).currentDirection == 0) {
+                                    if (theGrid[row][columnInt - UserJoin.users.get(tempUserIndex).currentSpeed] == 0 &&
+                                            theGrid[row][columnInt - 1] == 0) {
+                                        theGrid[row][columnInt - 1] = theGrid[row][columnInt];
+                                        theGrid[row][columnInt - UserJoin.users.get(tempUserIndex).currentSpeed] = theGrid[row][columnInt];
+                                        if (UserJoin.users.get(tempUserIndex).isJetWallOn) {
                                             theGrid[row][columnInt] += 30;
-                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2){
-                                                theGrid[row][columnInt - 1] = theGrid[row - 2][columnInt];
+                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2) {
+                                                theGrid[row][columnInt - 1] = theGrid[row][columnInt];
                                             }
-                                        } else {
-                                            theGrid[row][columnInt] = 0;
                                         }
-                                    } else if (UserJoin.users.get(tempUserIndex).currentDirection == 1) {
-                                        if (theGrid[row - UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] == 0) {
-                                            theGrid[row - UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] = theGrid[row][columnInt];
-                                            theGrid[row][columnInt] += 30;
-                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2){
-                                                theGrid[row - 1][columnInt] = theGrid[row - 2][columnInt];
-                                            }
-                                        } else {
-                                            theGrid[row][columnInt] = 0;
-                                        }
-                                    } else if (UserJoin.users.get(tempUserIndex).currentDirection == 2) {
-                                        if (theGrid[row][columnInt + UserJoin.users.get(tempUserIndex).currentSpeed] == 0) {
-                                            theGrid[row][columnInt + UserJoin.users.get(tempUserIndex).currentSpeed] = theGrid[row][columnInt];
-                                            theGrid[row][columnInt] += 30;
-                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2){
-                                                theGrid[row][columnInt + 1] = theGrid[row][columnInt + 2];
-                                            }
-                                        } else {
-                                            theGrid[row][columnInt] = 0;
-                                        }
-                                    } else if (UserJoin.users.get(tempUserIndex).currentDirection == 3) {
-                                        if (theGrid[row + UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] == 0) {
-                                            theGrid[row + UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] = theGrid[row][columnInt];
-                                            theGrid[row][columnInt] += 30;
-                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2){
-                                                theGrid[row + 1][columnInt] = theGrid[row + 2][columnInt];
-                                            }
-                                        } else {
-                                            theGrid[row][columnInt] = 0;
-                                        }
+                                    } else {
+                                        theGrid[row][columnInt] = 0;
                                     }
-                                } catch (ArrayIndexOutOfBoundsException e) {
-                                    theGrid[row][columnInt] = 0;
+                                } else if (UserJoin.users.get(tempUserIndex).currentDirection == 1) {
+                                    if (theGrid[row - UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] == 0 &&
+                                            theGrid[row - 1][columnInt] == 0) {
+                                        theGrid[row - 1][columnInt] = theGrid[row][columnInt];
+                                        theGrid[row - UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] = theGrid[row][columnInt];
+                                        if (UserJoin.users.get(tempUserIndex).isJetWallOn) {
+                                            theGrid[row][columnInt] += 30;
+                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2) {
+                                                theGrid[row - 1][columnInt] = theGrid[row][columnInt];
+                                            }
+                                        }
+                                    } else {
+                                        theGrid[row][columnInt] = 0;
+                                    }
+                                } else if (UserJoin.users.get(tempUserIndex).currentDirection == 2) {
+                                    if (theGrid[row][columnInt + UserJoin.users.get(tempUserIndex).currentSpeed] == 0 &&
+                                            theGrid[row][columnInt + 1] == 0) {
+                                        theGrid[row][columnInt + 1] = theGrid[row][columnInt];
+                                        theGrid[row][columnInt + UserJoin.users.get(tempUserIndex).currentSpeed] = theGrid[row][columnInt];
+                                        if (UserJoin.users.get(tempUserIndex).isJetWallOn) {
+                                            theGrid[row][columnInt] += 30;
+                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2) {
+                                                theGrid[row][columnInt + 1] = theGrid[row][columnInt];
+                                            }
+                                        }
+                                    } else {
+                                        theGrid[row][columnInt] = 0;
+                                    }
+                                } else if (UserJoin.users.get(tempUserIndex).currentDirection == 3) {
+                                    if (theGrid[row + UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] == 0 &&
+                                            theGrid[row + 1][columnInt] == 0) {
+                                        theGrid[row + 1][columnInt] = theGrid[row][columnInt];
+                                        theGrid[row + UserJoin.users.get(tempUserIndex).currentSpeed][columnInt] = theGrid[row][columnInt];
+                                        if (UserJoin.users.get(tempUserIndex).isJetWallOn) {
+                                            theGrid[row][columnInt] += 30;
+                                            if (UserJoin.users.get(tempUserIndex).currentSpeed == 2) {
+                                                theGrid[row][columnInt + 1] = theGrid[row][columnInt];
+                                            }
+                                        }
+                                    } else {
+                                        theGrid[row][columnInt] = 0;
+                                    }
                                 }
+                            } catch (ArrayIndexOutOfBoundsException e) {
+                                theGrid[row][columnInt] = 0;
                             }
                         }
                     }
                 }
-                try {
-                    System.out.println(gridMessage());
-                    ServerUDP.sendPackets(gridMessage());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
+            try {
+                ServerUDP.sendPackets(gridMessage());
+                if (gridMessage().contains("GAME OVER")) {
+                    System.exit(0);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     };
 
 
-    private static int resetDirection(int row, int columnInt){
-        if (columnInt == 100){
+    private static int resetDirection(int row, int columnInt) {
+        if (columnInt == 100) {
             return 0;
-        }
-
-        else if (row == 100){
+        } else if (row == 100) {
             return 1;
-        }
-
-        else if (columnInt == 0){
+        } else if (columnInt == 0) {
             return 2;
-        }
-
-        else if (row == 0){
+        } else if (row == 0) {
             return 3;
-        }
-
-        else{
+        } else {
             return 0;
         }
     }
 
     public static void positionUsers() {
-//        UserJoin.users.add(new User("User 1", 1, 2,  0, true));
-//        UserJoin.users.add(new User("User 2", 2, 2,  0, true));
-//        UserJoin.users.add(new User("User 3", 3, 2,  0, true));
-//        UserJoin.users.add(new User("User 4", 4, 2,  0, true));
-//        UserJoin.users.add(new User("User 5", 5, 2,  0, true));
-//        UserJoin.users.add(new User("User 6", 6, 2,  0, true));
-//        UserJoin.users.add(new User("User 7", 7, 2,  0, true));
-//        UserJoin.users.add(new User("User 8", 8, 2,  0, true));
-//        UserJoin.users.add(new User("User 9", 9, 2,  0, true));
-//        UserJoin.users.add(new User("User 10", 10, 2,  0, true));`
-//        UserJoin.users.add(new User("User 11", 11, 2,  0, true));
-//        UserJoin.users.add(new User("User 12", 12, 2,  0, true));
-//        UserJoin.users.add(new User("User 13", 13, 2,  0, true));
-//        UserJoin.users.add(new User("User 14", 14, 2,  0, true));
-//        UserJoin.users.add(new User("User 15", 15, 2,  0, true));
-//        UserJoin.users.add(new User("User 16", 16, 2,  0, true));
-//        UserJoin.users.add(new User("User 17", 17, 2,  0, true));
-//        UserJoin.users.add(new User("User 18", 18, 2,  0, true));
-//        UserJoin.users.add(new User("User 19", 19, 2,  0, true));
-//        UserJoin.users.add(new User("User 20", 20, 2,  0, true));
         Collections.shuffle(UserJoin.users);
         int IDCount = 0;
-        for (User user : UserJoin.users){
+        for (User user : UserJoin.users) {
             user.userID = IDCount;
             IDCount++;
         }
@@ -301,7 +301,7 @@ public class GridGame {
 
         int userAssignCount = 0;
         for (int row = 0; row < theGrid.length; row++) {
-            for (int columnInt = 0; columnInt < theGrid[row].length ; columnInt++) {
+            for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
                 if (theGrid[row][columnInt] == 100) {
                     theGrid[row][columnInt] = UserJoin.users.get(userAssignCount).userID + 1;
                     UserJoin.users.get(userAssignCount).currentDirection = resetDirection(row, columnInt);
@@ -311,10 +311,57 @@ public class GridGame {
         }
     }
 
+    public void writeHighScore(int highScore){
+
+        try {
+            FileWriter fileWriter =
+                    new FileWriter("highscoresheet.txt");
+
+            BufferedWriter bufferedWriter =
+                    new BufferedWriter(fileWriter);
+
+            bufferedWriter.write("" + highScore);
+            bufferedWriter.close();
+        }
+        catch(IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public int findHighScore() {
+        String line = null;
+        int currentHighScore = 0;
+        try {
+            FileReader fileReader =
+                    new FileReader("highscoresheet.txt");
+
+            BufferedReader bufferedReader =
+                    new BufferedReader(fileReader);
+
+            while ((line = bufferedReader.readLine()) != null) {
+                if (Integer.parseInt(line) > currentHighScore){
+                    currentHighScore = Integer.parseInt(line);
+                }
+            }
+
+            bufferedReader.close();
+        } catch (FileNotFoundException ex) {
+            System.out.println(
+                    "Unable to open file '" +
+                            workingDir + "'");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return currentHighScore;
+    }
+
+
+
     public void runGame(){
         positionUsers();
-        timer.scheduleAtFixedRate(tsk, 20, 200);
-        timer.scheduleAtFixedRate(clientInput, 20, 10);
+        timer.scheduleAtFixedRate(tsk, 20, 50);
+        timer.scheduleAtFixedRate(clientInput, 0, 5);
     }
 
 }

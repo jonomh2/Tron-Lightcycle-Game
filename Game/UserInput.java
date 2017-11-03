@@ -110,6 +110,7 @@ public class UserInput extends JFrame implements ActionListener{
         if (!Objects.equals(userName, "")){
 
             try {
+                ClientGame.playerName = userName;
                 ClientUDP.sendPackets("ADD USER " + userName);
                 ClientGame.playerColour = getUserColour(colour);
                 setVisible(false);
