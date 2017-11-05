@@ -4,7 +4,6 @@ public class UserJoin {
 
     private static int secondsPassed = 0;
     private static boolean timeUp = false;
-    private static boolean newPlayerJoin = true;
 
 
     Timer timer = new Timer();

@@ -3,7 +3,6 @@ import java.util.*;
 
 public class GridGame {
 
-    static int playerCount = UserJoin.users.size();
     public static String workingDir = (System.getProperty("user.dir") + "\\Game\\");
     private String clientMessage;
 
@@ -16,14 +15,13 @@ public class GridGame {
     public static String[] playerPositions = {"100,35", "100,65", "0,50", "0,20", "0,80", "50,0", "50,100", "80,0",
             "80,100", "20,0", "20,100", "100,20", "100,80", "0,35", "0,65", "35,100", "35,0", "65,0", "65,100", "100,50"};
 
-    public static int[] PositionToCoord(String position) {
+    public static int[] positionToCoord(String position) {
         String stringCoords[] = position.split(",");
         return Arrays.stream(stringCoords).mapToInt(Integer::parseInt).toArray();
     }
 
 
     int gameWinnerID;
-    private int secondsPassed = 0;
 
     public String gridMessage() {
         int playerLeftCount = 0;
@@ -164,7 +162,6 @@ public class GridGame {
             int repeatLoop = 0;
             ArrayList<Integer> noRepeat = new ArrayList<Integer>();
             noRepeat.clear();
-            secondsPassed++;
             int tempUserIndex = 0;
             for (int row = 0; row < theGrid.length; row++) { //runs through each number
                 for (int columnInt = 0; columnInt < theGrid[row].length; columnInt++) {
@@ -285,8 +282,8 @@ public class GridGame {
             IDCount++;
         }
         for (int i = 0; i < UserJoin.users.size(); i++) {
-            int tempY = PositionToCoord(playerPositions[i])[0];
-            int tempX = PositionToCoord(playerPositions[i])[1];
+            int tempY = positionToCoord(playerPositions[i])[0];
+            int tempX = positionToCoord(playerPositions[i])[1];
             for (int row = 0; row < theGrid.length; row++) {
                 for (int column = 0; column < theGrid[row].length; column++) {
                     if (row == tempY) {
@@ -360,8 +357,8 @@ public class GridGame {
 
     public void runGame(){
         positionUsers();
-        timer.scheduleAtFixedRate(tsk, 20, 50);
-        timer.scheduleAtFixedRate(clientInput, 0, 5);
+        timer.scheduleAtFixedRate(tsk, 20, 200);
+        timer.scheduleAtFixedRate(clientInput, 0, 20);
     }
 
 }
